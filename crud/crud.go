@@ -12,58 +12,7 @@ type Item struct {
 	Price float64
 }
 
-var items = map[string]Item{}
-
-// CREATE
-func create(w http.ResponseWriter, r*http.Request) {
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method's not allowed.", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var newItem Item
-
-	newItem.ID = "1"
-	newItem.Name = "Test One"
-	newItem.Price = 2.1
-
-	items[newItem.ID] = newItem
-
-	fmt.Fprintf(w, "successfully created.")
-
-}
-
-// READ
-func read(w http.ResponseWriter, r*http.Request) {
-	
-	itemID := r.URL.Query().Get("id")
-
-	item, found := items[itemID]
-
-	if !found {
-
-		http.NotFound(w, r)
-	}
-
-	fmt.Fprintf(w, "Item ID: %s, Name: %s, Price: %2f", item.ID, item.Name, item.Price)
-}
-
-// READ ALL DATA
-func readAll(w http.ResponseWriter, r*http.Request) {
-
-	jsonData, err := json.Marshal(items)
-
-	if err != nil {
-		http.Error(w, "unable to marshal items to JSON", http.StatusInternalServerError)
-	}
-	
-	w.Header().Set("Content-type", "application/json")
-
-	w.Write(jsonData)
-}
-
-// UPDATE
+/** UPDATE */
 func update(w http.ResponseWriter, r*http.Request) {
 
 
@@ -100,6 +49,59 @@ func update(w http.ResponseWriter, r*http.Request) {
 	fmt.Fprintln(w, item.Name)
 }
 
+
+var items = map[string]Item{}
+
+// CREATE
+func create(w http.ResponseWriter, r*http.Request) {
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method's not allowed.", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var newItem Item
+
+	newItem.ID = "1"
+	newItem.Name = "Test One"
+	newItem.Price = 2.1
+
+	items[newItem.ID] = newItem
+
+	fmt.Fprintf(w, "successfully created.")
+
+}
+
+// READ
+func read(w http.ResponseWriter, r*http.Request) {
+
+	itemID := r.URL.Query().Get("id")
+
+	item, found := items[itemID]
+
+	if !found {
+
+		http.NotFound(w, r)
+	}
+
+	fmt.Fprintf(w, "Item ID: %s, Name: %s, Price: %2f", item.ID, item.Name, item.Price)
+}
+
+// READ ALL DATA
+func readAll(w http.ResponseWriter, r*http.Request) {
+
+	jsonData, err := json.Marshal(items)
+
+	if err != nil {
+		http.Error(w, "unable to marshal items to JSON", http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-type", "application/json")
+
+	w.Write(jsonData)
+}
+
+
 // DELETE
 func remove(w http.ResponseWriter, r*http.Request) {
 
@@ -130,5 +132,5 @@ func main() {
 
 	fmt.Println("Server is listening on port 8080...")
 	http.ListenAndServe(":8080", nil);
-	
+
 }
